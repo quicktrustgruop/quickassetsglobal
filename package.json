@@ -1,0 +1,49 @@
+{
+  "name": "quickassets-global-backend",
+  "version": "1.0.0",
+  "description": "Backend para o sistema QuickAssetsGlobal de mineração institucional e DeFi",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "mining",
+    "defi",
+    "blockchain",
+    "bitcoin",
+    "ethereum"
+  ],
+  "author": "QuickAssetsGlobal Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.1467.0",
+    "axios": "^1.6.0",
+    "bcrypt": "^5.1.1",
+    "bitcoinjs-lib": "^6.1.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.0",
+    "helmet": "^7.0.0",
+    "joi": "^17.10.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.3",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.33.0",
+    "socket.io": "^4.7.2",
+    "web3": "^4.1.2",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  }
+}

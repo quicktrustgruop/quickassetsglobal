@@ -1,0 +1,106 @@
+version: '3'
+
+services:
+  # Serviço principal do backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quickassets-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=quickassets
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=24h
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_KMS_KEY_ID=${AWS_KMS_KEY_ID}
+      - BTC_NETWORK=${BTC_NETWORK}
+      - BTC_RPC_URL=${BTC_RPC_URL}
+      - BTC_RPC_USER=${BTC_RPC_USER}
+      - BTC_RPC_PASSWORD=${BTC_RPC_PASSWORD}
+      - BTC_WALLET_ADDRESS=${BTC_WALLET_ADDRESS}
+      - ETH_NETWORK=${ETH_NETWORK}
+      - ETH_RPC_URL=${ETH_RPC_URL}
+      - ETH_WALLET_ADDRESS=${ETH_WALLET_ADDRESS}
+      - ETH_PRIVATE_KEY=${ETH_PRIVATE_KEY}
+      - SAQUE_BTC_LIMITE_USD=${SAQUE_BTC_LIMITE_USD}
+      - SAQUE_BTC_TEMPO_LIMITE_HORAS=${SAQUE_BTC_TEMPO_LIMITE_HORAS}
+      - SAQUE_BTC_MIN_CONFIRMACOES=${SAQUE_BTC_MIN_CONFIRMACOES}
+      - EXCHANGE_API_KEY=${EXCHANGE_API_KEY}
+      - EXCHANGE_API_URL=${EXCHANGE_API_URL}
+      - MONITORING_INTERVAL_MS=${MONITORING_INTERVAL_MS}
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+    networks:
+      - quickassets-network
+
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:14
+    container_name: quickassets-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=quickassets
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - quickassets-network
+
+  # Serviço de monitoramento com Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: quickassets-grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - quickassets-network
+
+  # Serviço de monitoramento com Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: quickassets-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - quickassets-network
+
+volumes:
+  postgres-data:
+  grafana-data:
+  prometheus-data:
+
+networks:
+  quickassets-network:
+    driver: bridge
